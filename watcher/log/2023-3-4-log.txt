@@ -1,0 +1,4 @@
+19:27:17=>[DEBUG] zookeeper_init success!
+19:31:36=>[ERROR] delete log fail!
+19:31:36=>[DEBUG] zookeeper_init success!
+19:31:49=>[ERROR] delete log fail!

@@ -1,0 +1,4 @@
+0:28:32=>[DEBUG] zookeeper_init success!
+0:31:21=>[ERROR] insert LOGIN id = root, mac_add = 00:50:56:C0:00:01
+0:32:48=>[ERROR] insert LOGIN id = root, mac_add = 00:50:56:C0:00:01
+17:6:11=>[ERROR] insert LOGIN id = root, mac_add = 00:50:56:C0:00:01
