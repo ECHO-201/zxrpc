@@ -1,0 +1,9 @@
+syntax="proto3";
+
+package proto_test;
+
+message EchoMessage
+{   
+    int32 id = 2;
+    string content = 1;
+};
