@@ -4,6 +4,8 @@
 
 #include "MyDB.h"
 
+using namespace watcher::mysql;
+
 // 定义宏 LOG_XXXX("xxx %d %s", 20, "xxxx")
 #define LOG_INFO(logmsgformat, ...) \
     do \
@@ -56,7 +58,6 @@
         Logger.Log(c); \
     } while(0) \
 
-// 定义日志级别
 enum LogLevel
 {
     DEBUG,
@@ -89,8 +90,8 @@ public:
      */ 
     void Log(std::string msg);
 private:
-    int m_loglevel; // 记录日志级别
-    LockQueue<std::string> m_lckQue; // 日志缓冲队列
+    int m_loglevel; 
+    LockQueue<std::string> m_lckQue; 
     static const char* str_level[LEVEL_COUNT];
 
     Logger();

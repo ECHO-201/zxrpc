@@ -8,16 +8,16 @@ using namespace watcher::mysql;
 
 MyDB::MyDB()
 {
-    mysql = mysql_init(NULL);   //初始化数据库连接变量
+    mysql = mysql_init(NULL);
     if(mysql == NULL)
     {
         std::cout << "Error:" << mysql_error(mysql);
         exit(1);
     }
-    std::string db_host = config_file::instance()->GetStringInfo("mysql","db_host","192.168.16.4");
+    std::string db_host = config_file::instance()->GetStringInfo("mysql","db_host","127.0.0.1");
     std::string db_user = config_file::instance()->GetStringInfo("mysql","db_user","root");
     std::string db_passwd = config_file::instance()->GetStringInfo("mysql","db_passwd","123456");
-    std::string db_table = config_file::instance()->GetStringInfo("mysql","db_table","android");
+    std::string db_table = config_file::instance()->GetStringInfo("mysql","db_table","xxxxx");
 	bool flag = initDB(db_host, db_user, db_passwd, db_table);
     if(!flag){
         std::cout<< "mysql connect fail" << std::endl;
@@ -26,7 +26,7 @@ MyDB::MyDB()
 
 MyDB::~MyDB()
 {
-    if(mysql!=NULL)  //关闭数据连接
+    if(mysql!=NULL)
     {
         mysql_close(mysql);
     }
@@ -35,8 +35,6 @@ MyDB::~MyDB()
 
 bool MyDB::initDB(std::string host,std::string user,std::string passwd,std::string db_name)
 {
-    // 函数mysql_real_connect建立一个数据库连接  
-    // 成功返回MYSQL*连接句柄，失败返回NULL  
     mysql = mysql_real_connect(mysql, host.c_str(), user.c_str(), passwd.c_str(), db_name.c_str(), 0, NULL, 0);
     mysql_set_character_set(mysql, "utf8");  
     if(mysql == NULL)  
@@ -49,39 +47,37 @@ bool MyDB::initDB(std::string host,std::string user,std::string passwd,std::stri
 
 bool MyDB::exeSQL(std::string sql)
 {
-    //(result);
-    //mysql_query()执行成功返回0,执行失败返回非0值。
     if (mysql_query(mysql,sql.c_str()))
     {
         std::cout<<"Query Error: "<<mysql_error(mysql);
         return false;
     }
-    else // 查询成功
+    else
     {
-        result = mysql_store_result(mysql);  //获取结果集
-        if (result)  // 返回了结果集
+        result = mysql_store_result(mysql);
+        if (result) 
         {
-           int  num_fields = mysql_num_fields(result);   //获取结果集中总共的字段数，即列数
-           int  num_rows=mysql_num_rows(result);       //获取结果集中总共的行数
-           for(int i=0;i<num_rows;i++) //输出每一行
+           int  num_fields = mysql_num_fields(result); 
+           int  num_rows=mysql_num_rows(result);     
+           for(int i=0;i<num_rows;i++) 
             {
-                //获取下一行数据
+
                 row=mysql_fetch_row(result);
                 if(row<0) break;
-                for(int j=0;j<num_fields;j++)  //输出每一字段
+                for(int j=0; j<num_fields; ++j)  
                 {
                     std::cout<<row[j]<<"\t\t";
                 }
                 std::cout<<std::endl;
             }
         }
-        else  // result==NULL
+        else  
         {
-            if(mysql_field_count(mysql) == 0)   //代表执行的是update,insert,delete类的非查询语句
+            if(mysql_field_count(mysql) == 0)   
             {
                 // (it was not a SELECT)
                 
-                int num_rows = mysql_affected_rows(mysql);  //返回update,insert,delete影响的行数
+                int num_rows = mysql_affected_rows(mysql); 
             }
             else // error
             {
@@ -103,16 +99,15 @@ std::vector<user> MyDB::exe_select(std::string sql){
         std::cout<<"Query Error: "<<mysql_error(mysql);
         return cour;
     }
-    else // 查询成功
+    else 
     {
-        result = mysql_store_result(mysql);  //获取结果集
-        if (result)  // 返回了结果集
+        result = mysql_store_result(mysql); 
+        if (result) 
         { 
-           int  num_fields = mysql_num_fields(result);   //获取结果集中总共的字段数，即列数
-           int  num_rows = mysql_num_rows(result);       //获取结果集中总共的行数
-           for(int i = 0; i < num_rows; ++i) //输出每一行
+           int  num_fields = mysql_num_fields(result); 
+           int  num_rows = mysql_num_rows(result);    
+           for(int i = 0; i < num_rows; ++i) 
             {
-                //获取下一行数据
                 row=mysql_fetch_row(result);
                 if(row < 0) break;
                 user dt;
@@ -122,7 +117,7 @@ std::vector<user> MyDB::exe_select(std::string sql){
                 dt.id = row[0];
                 dt.name = row[1];
                 dt.passwd = row[2];
-                /*for(int j=0;j<num_fields;++j)  //输出每一字段
+                /*for(int j=0;j<num_fields;++j)
                 {
                     std::cout<<row[j]<<"\t\t";
                 }*/
@@ -140,16 +135,15 @@ std::vector<log_data> MyDB::get_log(std::string sql){
         std::cout<< "Query Error: " << mysql_error(mysql);
         return cour_log;
     }
-    else // 查询成功
+    else 
     {
-        result = mysql_store_result(mysql);  //获取结果集
-        if (result)  // 返回了结果集
+        result = mysql_store_result(mysql); 
+        if (result) 
         { 
-           int  num_fields = mysql_num_fields(result);   //获取结果集中总共的字段数，即列数
-           int  num_rows = mysql_num_rows(result);       //获取结果集中总共的行数
-           for(int i=0; i<num_rows; ++i) //输出每一行
+           int  num_fields = mysql_num_fields(result);  
+           int  num_rows = mysql_num_rows(result);    
+           for(int i=0; i<num_rows; ++i) 
             {
-                //获取下一行数据
                 row = mysql_fetch_row(result);
                 if(row < 0) break;
                 log_data dt;
@@ -161,7 +155,7 @@ std::vector<log_data> MyDB::get_log(std::string sql){
                 dt.ip = row[1];
                 dt.port = row[2];
                 dt.record = row[3];
-                /*for(int j=0;j<num_fields;++j)  //输出每一字段
+                /*for(int j=0;j<num_fields;++j) 
                 {
                     std::cout<<row[j]<<"\t\t";
                 }*/
@@ -175,7 +169,7 @@ std::vector<log_data> MyDB::get_log(std::string sql){
 
 bool MyDB::exeSQLinsert(std::string sql){   
     bool flag; 
-    if (mysql_query(mysql, sql.c_str()))        //执行SQL语句  
+    if (mysql_query(mysql, sql.c_str()))      
 	{
 		printf("Query failed (%s)\n", mysql_error(mysql));
 		flag = false;
@@ -194,15 +188,14 @@ std::string MyDB::exeSQLdesc(std::string sql){
         std::cout << "Query Error: " << mysql_error(mysql);
         return "NULL";
     }
-    else // 查询成功
+    else 
     {
-        result = mysql_store_result(mysql);  //获取结果集
-        if (result)  // 返回了结果集
+        result = mysql_store_result(mysql); 
+        if (result)  
         { 
-           int  num_fields = mysql_num_fields(result);   //获取结果集中总共的字段数，即列数
-           int  num_rows = mysql_num_rows(result);       //获取结果集中总共的行数
+           int  num_fields = mysql_num_fields(result);   
+           int  num_rows = mysql_num_rows(result);     
            
-                //获取下一行数据
                 row = mysql_fetch_row(result);
                 if(row < 0) return "NULL";
         }
@@ -216,15 +209,14 @@ std::string MyDB::exeSQLInfor(std::string sql){
         std::cout<<"Query Error: "<<mysql_error(mysql);
         return "NULL";
     }
-    else // 查询成功
+    else 
     {
-        result = mysql_store_result(mysql);  //获取结果集
-        if (result)  // 返回了结果集
+        result = mysql_store_result(mysql);  
+        if (result)  
         { 
-           int  num_fields = mysql_num_fields(result);   //获取结果集中总共的字段数，即列数
-           int  num_rows=mysql_num_rows(result);       //获取结果集中总共的行数
+           int  num_fields = mysql_num_fields(result); 
+           int  num_rows=mysql_num_rows(result);   
            
-                //获取下一行数据
                 row = mysql_fetch_row(result);
                 if(row<0) return "NULL";
         }

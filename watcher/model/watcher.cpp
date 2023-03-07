@@ -12,6 +12,7 @@
 using namespace watcher::redis;
 using namespace watcher::tools;
 using namespace watcher::mysql;
+using namespace watcher::zookeeper;
 
 Watcher::Watcher()
 {

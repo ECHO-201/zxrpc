@@ -7,6 +7,8 @@
 
 #include <map>
 
+using namespace watcher::mysql;
+
 class User : model {
 public:
     User();

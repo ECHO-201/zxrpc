@@ -5,9 +5,6 @@
 #include <map>
 
 
-//定义一个存放配置信息的map
-//key 是string 存放一个标题section
-//value 是一个map 存放该标题下面的所有key-value键值对
 namespace watcher {
 namespace tools {
 typedef std::map<std::string, std::map<std::string, std::string> *> STR_MAP;
@@ -46,13 +43,11 @@ public:
     //设置配置文件所在路径
     static bool setPath(const std::string& path);
     
-    //获取单例
     static config_file *instance();
 
 private:
     config_file() { };
 
-    // 字符串配置文件解析基础方法
     bool isSection(std::string line, std::string& section);
     unsigned parseNumber(const std::string& s);
     std::string trimLeft(const std::string& s);

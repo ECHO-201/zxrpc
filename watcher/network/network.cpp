@@ -6,6 +6,7 @@
 
 using namespace watcher::redis;
 using namespace watcher::tools;
+using namespace watcher::network;
 
 Server::Server(muduo::net::EventLoop *loop, const muduo::net::InetAddress &listenAddr, int numThreads):loop_(loop), 
 server_(loop, listenAddr, "Server"), 
@@ -20,10 +21,10 @@ void Server::start(){
 	server_.start();
 }
 
-void Server::onConnection(const muduo::net::TcpConnectionPtr &conn){ // TCP连接与断开时都会调用它
+void Server::onConnection(const muduo::net::TcpConnectionPtr &conn){ 
 	LOG_INFO << "Server - client(" << conn->peerAddress().toIpPort() << ") -> server(" << 
 	conn->localAddress().toIpPort() << ") is " << (conn->connected() ? "UP":"DOWN");
-	if(!conn->connected()){//客户端断开连接
+	if(!conn->connected()){
 		Redis redis;
 		if(!redis.connect())
 		{
@@ -31,14 +32,14 @@ void Server::onConnection(const muduo::net::TcpConnectionPtr &conn){ // TCP连�
 			return;
 		}
 		if(redis.del(conn->name())){	
-			conn->shutdown();  // 关闭套接字的写端
+			conn->shutdown();  
 		}
     }
 }
 
 void Server::onMessage(const muduo::net::TcpConnectionPtr &conn, muduo::net::Buffer *buf, 
 	muduo::Timestamp time){
-	muduo::string msg(buf->retrieveAllAsString()); // 取走数据
+	muduo::string msg(buf->retrieveAllAsString()); 
 	LOG_INFO << conn->name() << "echo " << msg.size() << "bytes, " << "data received at " 
 	<< time.toString();
 	
