@@ -1,1 +1,0 @@
-protoc echo.proto -I./ --cpp_out=./
