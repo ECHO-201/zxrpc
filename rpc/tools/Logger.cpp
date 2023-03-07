@@ -14,7 +14,7 @@ const char* Logger::str_level[LEVEL_COUNT] =
     "FATAL"
 };
 
-// 获取日志的单例
+
 Logger& Logger::GetInstance()
 {
     static Logger Logger;
@@ -29,11 +29,10 @@ Logger::Logger()
     }
     m_ip = config_file::instance()->GetStringInfo("server", "ip", "0.0.0.0");
     m_port = config_file::instance()->GetStringInfo("server", "port", "10000");
-    // 启动专门的写日志线程
+
     std::thread writeLogTask([&](){
         for (;;)
         {
-            // 获取当前的日期，然后取日志信息，写入相应的日志文件当中 a+
             time_t now = time(nullptr);
             tm *nowtm = localtime(&now);
 
@@ -71,7 +70,7 @@ Logger::Logger()
             }
         }
     });
-    // 设置分离线程，守护线程
+
     writeLogTask.detach();
 }
 
@@ -80,13 +79,12 @@ Logger::~Logger(){
     db = NULL;
 }
 
-// 设置日志级别 
+
 void Logger::SetLogLevel(LogLevel level)
 {
     m_loglevel = level;
 }
 
-// 写日志， 把日志信息写入lockqueue缓冲区当中
 void Logger::Log(std::string msg)
 {
     m_lckQue.Push(std::make_pair(m_loglevel, msg));

@@ -16,7 +16,6 @@ public:
     string get_root_path();
 
 private:
-    // 创建dump文件，用来之后DEBUG
     void core_dump();
 
 private:

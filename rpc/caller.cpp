@@ -1,4 +1,5 @@
 #include "RpcCaller.h"
+#include "Load_balance.h"
 using namespace zxrpc::rpc;
 
 #include "proto/echo.pb.h"
@@ -54,10 +55,14 @@ void stroge_succ_fail(MyDB *mysql, string name, string reply){
 
 
 int main()
-{
-    
+{   
     RpcCaller *rpcCaller = new RpcCaller();
-    rpcCaller->set_service("zxrpc");
+
+    LoadBalance loadbl;
+    loadbl.set_service("zxrpc");
+    //loadbl.set_service("bkrpc");
+    std::string ld = loadbl.ramdomStrategy();
+    rpcCaller->set_service(ld);
     rpcCaller->get_host_data("sum");
     rpcCaller->connect();
     MyDB *mysql = new MyDB();
@@ -89,6 +94,9 @@ int main()
     // std::cout << response.content() << std::endl;
     
     //client.send("sum", 1, 2);
+
+    delete mysql;
+    mysql = NULL;
 
     delete rpcCaller;
     rpcCaller = NULL;

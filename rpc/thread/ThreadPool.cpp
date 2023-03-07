@@ -46,7 +46,7 @@ void ThreadPool::move_to_idle_list(Thread *thread)
     std::set<Thread *>::iterator it = m_list_busy.find(thread);
     if (it != m_list_busy.end())
         m_list_busy.erase(it);
-    m_cond_busy.signal(); // 发送信号，wait接收
+    m_cond_busy.signal(); 
     m_mutex_busy.unlock();
 }
 

@@ -59,7 +59,7 @@ namespace tools {
         Logger.Log(c); \
     } while(0) \
 
-// 定义日志级别
+
 enum LogLevel
 {
     DEBUG,

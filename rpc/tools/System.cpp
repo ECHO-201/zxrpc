@@ -27,23 +27,19 @@ void System::init()
 
     m_root_path = get_root_path(); 
     const string logDir = m_root_path + "/log";
-    //init Logging
     DIR *dir = opendir(logDir.c_str());
     if(dir == NULL){
         mkdir(logDir.c_str(), 0755);
     }else{
-        //目录文件作为一种文件，再打开之前要先关闭，否则会由于文件的进程打开文件过多导致不能打开新的文件
         closedir(dir); 
     }
 
-    // init workflow
     Workflow * workflow = Singleton<Workflow>::instance();
     workflow->load(get_root_path() + "/config/workflow.xml");
 }
 
 void System::core_dump()
 {
-    // core dump
     struct rlimit x;
     int ret = getrlimit(RLIMIT_CORE, &x);
     x.rlim_cur = x.rlim_max;

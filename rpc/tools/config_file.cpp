@@ -36,12 +36,11 @@ float config_file::GetFloatInfo(const std::string& section, const std::string& k
 {
     std::ostringstream convert1;
     convert1 << default_value;
-    //将浮点转换成字符串，然后按照字符串业务处理
     std::string default_value_str = convert1.str();
     std::string text = GetStringInfo(section, key, default_value_str);
     std::istringstream convert2(text);
     float fresult;
-    if (!(convert2 >> fresult)) //如果Result放不下text对应的数字，执行将返回0
+    if (!(convert2 >> fresult)) 
         fresult = 0;
     return fresult;
 }
@@ -89,7 +88,7 @@ bool config_file::Load(const std::string& path)
         {
             continue;
         }
-        if (key[0] == '#' || key[0] == ';')  // skip comment
+        if (key[0] == '#' || key[0] == ';') 
         {
             continue;
         }
@@ -241,9 +240,7 @@ config_file *config_file::instance()
 bool config_file::setPath(const std::string& path)
 {
     assert(config == NULL);
-    //创建对象
     config = new config_file();
-    //加载文件
     return config->Load(path);
 }
 

@@ -22,6 +22,6 @@ bool UserPlugin::run(Context& ctx)
     reader.parse(input, value);
 
     ctx.ref<string>("output") += "hello, " + value["name"].asString() + " user plugin run!\n";
-    return true; // 是否走下一个工作流
+    return true;
 }
 

@@ -7,13 +7,12 @@
 using namespace zxrpc::tools;
 using namespace zxrpc::rpc;
 
-// 全局的watcher观察器   zkserver给ZkpClient的通知
 void global_watcher(zhandle_t *zh, int type,
                    int state, const char *path, void *watcherCtx)
 {
-    if (type == ZOO_SESSION_EVENT)  // 回调的消息类型是和会话相关的消息类型
+    if (type == ZOO_SESSION_EVENT) 
 	{
-		if (state == ZOO_CONNECTED_STATE)  // ZkpClient和zkserver连接成功
+		if (state == ZOO_CONNECTED_STATE) 
 		{
 			sem_t *sem = (sem_t*)zoo_get_context(zh);
             sem_post(sem);
@@ -29,23 +28,18 @@ ZkpClient::~ZkpClient()
 {
     if (m_zkpdle != nullptr)
     {
-        zookeeper_close(m_zkpdle); // 关闭句柄，释放资源  MySQL_Conn
+        zookeeper_close(m_zkpdle); 
     }
 }
 
-// 连接zkserver
 void ZkpClient::Start()
 {
-    std::string host = config_file::instance()->GetStringInfo("zookeeper", "zookeeperip", "0.0.0.0");
-    std::string port = config_file::instance()->GetStringInfo("zookeeper", "zookeeperport", "8000");
+    std::string host = config_file::instance()->GetStringInfo("zookeeper", "zookeeperip", "127.0.0.1");
+    std::string port = config_file::instance()->GetStringInfo("zookeeper", "zookeeperport", "2181");
     std::string connstr = host + ":" + port;
-	/*
-	zookeeper_mt：多线程版本
-	zookeeper的API客户端程序提供了三个线程
-	1.API调用线程 
-	2.网络I/O线程  pthread_create和poll
-	3.watcher回调线程 pthread_create
-	*/
+	
+	std::cout << connstr << std::endl;
+
     m_zkpdle = zookeeper_init(connstr.c_str(), global_watcher, 30000, nullptr, nullptr, 0);
     if (nullptr == m_zkpdle) 
     {
@@ -66,11 +60,10 @@ void ZkpClient::Create(const char *path, const char *data, int datalen, int stat
     char path_buffer[128];
     int bufferlen = sizeof(path_buffer);
     int flag;
-	// 先判断path表示的znode节点是否存在，如果存在，就不再重复创建了
+
 	flag = zoo_exists(m_zkpdle, path, 0, nullptr);
-	if (ZNONODE == flag) // 表示path的znode节点不存在
+	if (ZNONODE == flag) 
 	{
-		// 创建指定path的znode节点了
 		flag = zoo_create(m_zkpdle, path, data, datalen,
 			&ZOO_OPEN_ACL_UNSAFE, state, path_buffer, bufferlen);
 		if (flag == ZOK)

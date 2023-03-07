@@ -32,21 +32,19 @@ void WorkerThread::run()
     {
         LOG_ERROR("worker thread pthread_sigmask failed");
     }
-    pthread_cleanup_push(cleanup, this);// 销毁时的回调
+    pthread_cleanup_push(cleanup, this);
 
     while (true)
     {
-        // 等待任务
         m_mutex.lock();
         while (m_task == NULL)
             m_cond.wait(&m_mutex);
         m_mutex.unlock();
 
-        // 初始化状态
         int rc = 0;
         int old_state = 0;
 
-        rc = pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &old_state); // 设置为忙碌线程
+        rc = pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &old_state); 
 
         m_task->run();
         m_task->destroy();
@@ -54,8 +52,8 @@ void WorkerThread::run()
 
         Singleton<ThreadPool>::instance()->move_to_idle_list(this);
 
-        rc = pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &old_state); // 设置为空闲线程
-        pthread_testcancel(); // linux的cancel-point
+        rc = pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &old_state);
+        pthread_testcancel(); 
     }
     pthread_cleanup_pop(1);
 }

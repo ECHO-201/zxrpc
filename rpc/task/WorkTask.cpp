@@ -142,17 +142,16 @@ void WorkTask::run()
 		return;
 	}
 
+    Workflow *workflow = Singleton<Workflow>::instance();
+
     std::string workflow_time = rds.get(workflow_name);
     std::string workflow_mtime = ctime(&stat_buf.st_mtime);
-    if(workflow_time.empty() || workflow_mtime != workflow_time){
+    if(workflow->get_work_size() == 0 || workflow_time.empty() || workflow_mtime != workflow_time){
         LOG_DEBUG("change workflow");
-        Workflow *workflow = Singleton<Workflow>::instance();
         workflow->clear();
         workflow->load(workflow_name);
         rds.set(workflow_name, workflow_mtime);
     }
-
-    Workflow *workflow = Singleton<Workflow>::instance();
 
     ostringstream os;
     os << (int)(msg_head.cmd);

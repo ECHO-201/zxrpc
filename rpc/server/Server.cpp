@@ -26,11 +26,10 @@ void Server::listen(const string &ip, int port)
 
 void Server::start()
 {
-    // 初始化线程池和消息队列
-    TaskDispatcher *dispatcher = Singleton<TaskDispatcher>::instance(); // dispatcher事件分发
+
+    TaskDispatcher *dispatcher = Singleton<TaskDispatcher>::instance(); 
     dispatcher->init(m_threads);
 
-    // 初始化socket句柄
     SocketHandler *socket_handler = Singleton<SocketHandler>::instance();
     socket_handler->listen(m_ip, m_port);
     socket_handler->handleMain(m_connects, m_wait_time);

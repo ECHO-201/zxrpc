@@ -5,7 +5,7 @@
 #include <string>
 namespace zxrpc {
 namespace rpc {
-// 封装zk客户端类
+
 class ZkpClient
 {
 public:

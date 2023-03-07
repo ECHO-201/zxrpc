@@ -41,17 +41,14 @@ void RpcProvider::listen(const std::string & ip, int port)
 
 void RpcProvider::start()
 {
-    // 初始化线程池和队列
     TaskDispatcher * dispatcher = Singleton<TaskDispatcher>::instance();
     dispatcher->init(m_threads);
-    // 初始化socket句柄
     SocketHandler * socket_handler = Singleton<SocketHandler>::instance();
     socket_handler->listen(m_ip, m_port); 
 
     ZkpClient zkCli;
     zkCli.Start();
-    // service_name为永久性节点    method_name为临时性节点
-    // /service_name   /UserServiceRpc
+
     std::string service_path = "/" + m_service;
     zkCli.Create(service_path.c_str(), nullptr, 0);
 
@@ -60,12 +57,10 @@ void RpcProvider::start()
         std::string method_path = service_path + "/" + mp;
         char method_path_data[128] = {0};
         sprintf(method_path_data, "%s:%d", m_ip.c_str(), m_port);
-        // ZOO_EPHEMERAL表示znode是一个临时性节点
         zkCli.Create(method_path.c_str(), method_path_data, strlen(method_path_data), ZOO_EPHEMERAL);
         serv_storage(mp);
     }
 
-    // rpc服务端准备启动，打印信息
     LOG_DEBUG("RpcProvider start service at ip: %s port: %d", m_ip.c_str(), m_port);
 
     socket_handler->handle(m_connects, m_wait_time);

@@ -1,24 +1,18 @@
-#指定编译器
 CC = g++
 
-#找出当前目录下，所有的源文件（以.cpp结尾）
 SRCS := $(shell find ./* -type f | grep '\.cpp' | grep -v '\.svn' | grep -v '\./plugin' | grep -v '\./log' | grep -v 'main\.cpp' | grep -v 'callee\.cpp' | grep -v 'caller\.cpp')
 $(warning SRCS is ${SRCS})
 
-#确定cpp源文件对应的目标文件
 OBJS := $(patsubst %.cpp, %.o, $(filter %.cpp, $(SRCS)))
 $(warning OBJS is ${OBJS})
 
-#编译选项
 CFLAGS = -g -O2 -Wall -Werror -Wno-unused -ldl -lpthread -ljsoncpp -lprotobuf -fPIC -std=c++14 -lzookeeper_mt -lhiredis -lmysqlclient
 $(warning CFLAGS is ${CFLAGS})
 
-#找出当前目录下所有头文件
 INCLUDE_TEMP = $(shell find ./* -type d | grep -v '\.svn' | grep -v '\./plugin' | grep -v '\./client' | grep -v '\./config' | grep -v '\./log')
 INCLUDE = $(patsubst %,-I %, $(INCLUDE_TEMP))
 $(warning INCLUDE is ${INCLUDE})
 
-#主程序
 SRC_MAIN = main.cpp proto/echo.pb.h proto/echo.pb.cc
 OBJ_MAIN = ${SRC_MAIN:%.cpp=%.o}
 EXE_MAIN = main

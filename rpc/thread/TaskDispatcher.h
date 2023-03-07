@@ -14,7 +14,7 @@ namespace thread {
 class TaskDispatcher : public Thread
 {
 public:
-    TaskDispatcher(); // 与主线程分离
+    TaskDispatcher(); 
     ~TaskDispatcher();
 
     void init(int threads);
