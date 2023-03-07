@@ -58,7 +58,6 @@ void service::setTable(){
     int temp = 0;
     if(str == "0"){
         return;
-        //QMessageBox::information(NULL, "提示", "添加失败,课程id"+ui->id_2->text()+"有误", QMessageBox::Ok);
     }else{
         QJsonDocument jsonDocument;
         jsonDocument = QJsonDocument::fromJson(data);
