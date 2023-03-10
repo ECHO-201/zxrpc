@@ -47,6 +47,7 @@ void logpage::setTable(){
     int temp = 0;
     if(str == "0"){
         return;
+        
     }else{
         for(int i=0; i<str.size(); ++i){
             if(str[i]=='|'){

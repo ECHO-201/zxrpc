@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>注册</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="id">

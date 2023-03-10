@@ -1,5 +1,6 @@
 ﻿#include "network.h"
 #include <QNetworkInterface>
+
 network::network()
 {
 

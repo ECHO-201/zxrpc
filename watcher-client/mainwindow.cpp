@@ -18,7 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     socket = Singleton<QTcpSocket>::instance();
+    //取消已有的连接
     socket->abort();
+    //连接服务器
     socket->connectToHost(ip, port);
 
     connect(ui->login, &QPushButton::clicked, this,&MainWindow::on_login_clicked);

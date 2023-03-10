@@ -4,6 +4,6 @@
 #include <QString>
 
 const QString ip = "xxx.xxx.xxx.xxx";
-const int port = xxxxx;
+const int port = xxxx;
 
 #endif // CONFIG_FILE_H
