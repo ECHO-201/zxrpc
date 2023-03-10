@@ -13,12 +13,15 @@ class User : model {
 public:
     User();
     ~User();
+
     std::string Login(Json::Value &json);
-    
     std::string get_log(Json::Value &json);
     std::string del_log(Json::Value &json);
     std::string regis(Json::Value &json);
+    std::string get_user(Json::Value &json);
+    std::string update_passwd(Json::Value &json);
     std::string run(const TcpConnectionPtr &conn, Json::Value &json, int &num);
+    
     MsgHandler getHandler(int msgid);
 private:
         
@@ -26,3 +29,4 @@ private:
     TcpConnectionPtr conn_ptr;
     std::map<const int, MsgHandler> _msgHandlerMap;
 };
+

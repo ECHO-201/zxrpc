@@ -8,16 +8,16 @@ using namespace watcher::mysql;
 
 MyDB::MyDB()
 {
-    mysql = mysql_init(NULL);
+    mysql = mysql_init(NULL);   
     if(mysql == NULL)
     {
         std::cout << "Error:" << mysql_error(mysql);
         exit(1);
     }
-    std::string db_host = config_file::instance()->GetStringInfo("mysql","db_host","127.0.0.1");
+    std::string db_host = config_file::instance()->GetStringInfo("mysql","db_host","192.168.16.4");
     std::string db_user = config_file::instance()->GetStringInfo("mysql","db_user","root");
     std::string db_passwd = config_file::instance()->GetStringInfo("mysql","db_passwd","123456");
-    std::string db_table = config_file::instance()->GetStringInfo("mysql","db_table","xxxxx");
+    std::string db_table = config_file::instance()->GetStringInfo("mysql","db_table","android");
 	bool flag = initDB(db_host, db_user, db_passwd, db_table);
     if(!flag){
         std::cout<< "mysql connect fail" << std::endl;
@@ -26,7 +26,7 @@ MyDB::MyDB()
 
 MyDB::~MyDB()
 {
-    if(mysql!=NULL)
+    if(mysql!=NULL)  
     {
         mysql_close(mysql);
     }
@@ -34,7 +34,7 @@ MyDB::~MyDB()
 
 
 bool MyDB::initDB(std::string host,std::string user,std::string passwd,std::string db_name)
-{
+{ 
     mysql = mysql_real_connect(mysql, host.c_str(), user.c_str(), passwd.c_str(), db_name.c_str(), 0, NULL, 0);
     mysql_set_character_set(mysql, "utf8");  
     if(mysql == NULL)  
@@ -52,19 +52,18 @@ bool MyDB::exeSQL(std::string sql)
         std::cout<<"Query Error: "<<mysql_error(mysql);
         return false;
     }
-    else
+    else 
     {
-        result = mysql_store_result(mysql);
-        if (result) 
+        result = mysql_store_result(mysql); 
+        if (result)  
         {
-           int  num_fields = mysql_num_fields(result); 
-           int  num_rows=mysql_num_rows(result);     
+           int  num_fields = mysql_num_fields(result);   
+           int  num_rows=mysql_num_rows(result);       
            for(int i=0;i<num_rows;i++) 
             {
-
                 row=mysql_fetch_row(result);
                 if(row<0) break;
-                for(int j=0; j<num_fields; ++j)  
+                for(int j=0;j<num_fields;j++)  
                 {
                     std::cout<<row[j]<<"\t\t";
                 }
@@ -75,11 +74,10 @@ bool MyDB::exeSQL(std::string sql)
         {
             if(mysql_field_count(mysql) == 0)   
             {
-                // (it was not a SELECT)
                 
                 int num_rows = mysql_affected_rows(mysql); 
             }
-            else // error
+            else 
             {
                 std::cout<<"Get result error: "<<mysql_error(mysql);
                 return false;
@@ -102,12 +100,13 @@ std::vector<user> MyDB::exe_select(std::string sql){
     else 
     {
         result = mysql_store_result(mysql); 
-        if (result) 
+        if (result)  
         { 
-           int  num_fields = mysql_num_fields(result); 
-           int  num_rows = mysql_num_rows(result);    
+           int  num_fields = mysql_num_fields(result);   
+           int  num_rows = mysql_num_rows(result);       
            for(int i = 0; i < num_rows; ++i) 
             {
+                
                 row=mysql_fetch_row(result);
                 if(row < 0) break;
                 user dt;
@@ -117,12 +116,9 @@ std::vector<user> MyDB::exe_select(std::string sql){
                 dt.id = row[0];
                 dt.name = row[1];
                 dt.passwd = row[2];
-                /*for(int j=0;j<num_fields;++j)
-                {
-                    std::cout<<row[j]<<"\t\t";
-                }*/
+                
                 cour.push_back(dt);
-                //std::cout<<std::endl;
+               
             }
         }
         return cour;    
@@ -137,13 +133,14 @@ std::vector<log_data> MyDB::get_log(std::string sql){
     }
     else 
     {
-        result = mysql_store_result(mysql); 
-        if (result) 
+        result = mysql_store_result(mysql);  
+        if (result)  
         { 
-           int  num_fields = mysql_num_fields(result);  
-           int  num_rows = mysql_num_rows(result);    
+           int  num_fields = mysql_num_fields(result);   
+           int  num_rows = mysql_num_rows(result);       
            for(int i=0; i<num_rows; ++i) 
             {
+                
                 row = mysql_fetch_row(result);
                 if(row < 0) break;
                 log_data dt;
@@ -155,21 +152,46 @@ std::vector<log_data> MyDB::get_log(std::string sql){
                 dt.ip = row[1];
                 dt.port = row[2];
                 dt.record = row[3];
-                /*for(int j=0;j<num_fields;++j) 
-                {
-                    std::cout<<row[j]<<"\t\t";
-                }*/
+                
                 cour_log.push_back(dt);
-                //std::cout<<std::endl;
+                
             }
         }
         return cour_log;    
     }
 };
 
+std::vector<user> MyDB::get_user(std::string sql){
+   if (mysql_query(mysql,sql.c_str()))
+    {
+        std::cout<< "Query Error: " << mysql_error(mysql);
+        return cour;
+    }
+    else 
+    {
+        result = mysql_store_result(mysql);  
+        if (result)  
+        { 
+           int  num_fields = mysql_num_fields(result);  
+           int  num_rows = mysql_num_rows(result);       
+           for(int i=0; i<num_rows; ++i) 
+            {
+                
+                row = mysql_fetch_row(result);
+                if(row < 0) break;
+                user dt;
+                dt.name = row[0];
+                dt.phone = row[1];
+                cour.push_back(dt);
+            }
+        }
+        return cour;    
+    }
+};
+
 bool MyDB::exeSQLinsert(std::string sql){   
     bool flag; 
-    if (mysql_query(mysql, sql.c_str()))      
+    if (mysql_query(mysql, sql.c_str()))        
 	{
 		printf("Query failed (%s)\n", mysql_error(mysql));
 		flag = false;
@@ -190,38 +212,17 @@ std::string MyDB::exeSQLdesc(std::string sql){
     }
     else 
     {
-        result = mysql_store_result(mysql); 
+        result = mysql_store_result(mysql);  
         if (result)  
         { 
-           int  num_fields = mysql_num_fields(result);   
+           int  num_fields = mysql_num_fields(result);  
            int  num_rows = mysql_num_rows(result);     
            
+               
                 row = mysql_fetch_row(result);
                 if(row < 0) return "NULL";
         }
         return row[0];    
-    }
-};
-
-std::string MyDB::exeSQLInfor(std::string sql){
-    if (mysql_query(mysql,sql.c_str()))
-    {
-        std::cout<<"Query Error: "<<mysql_error(mysql);
-        return "NULL";
-    }
-    else 
-    {
-        result = mysql_store_result(mysql);  
-        if (result)  
-        { 
-           int  num_fields = mysql_num_fields(result); 
-           int  num_rows=mysql_num_rows(result);   
-           
-                row = mysql_fetch_row(result);
-                if(row<0) return "NULL";
-        }
-        std::string s=row[0];std::string st=row[1];
-        return s+":"+st;    
     }
 };
 

@@ -22,6 +22,8 @@ int main()
 	server.func_bind("get_log", "User", GET_LOG);
 	server.func_bind("del_log", "User", DEL_LOG);
 	server.func_bind("regis", "User", REGISTER);
+	server.func_bind("get_user", "User", GET_USER);
+	server.func_bind("up_passwd", "User", UP_PASSWD);
 	server.func_bind("get_node", "Watcher", GET_NODE);
 	server.func_bind("del_node", "Watcher", DEL_NODE);
 

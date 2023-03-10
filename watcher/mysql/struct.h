@@ -5,6 +5,7 @@ struct user{
     std::string id;
     std::string name;
     std::string passwd;
+    std::string phone;
 };
 
 struct log_data{

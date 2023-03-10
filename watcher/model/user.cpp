@@ -18,6 +18,8 @@ User::User(){
     _msgHandlerMap.insert({GET_LOG, bind(&User::get_log, this, _1)});
     _msgHandlerMap.insert({DEL_LOG, bind(&User::del_log, this, _1)});
     _msgHandlerMap.insert({REGISTER, bind(&User::regis, this, _1)});
+    _msgHandlerMap.insert({GET_USER, bind(&User::get_user, this, _1)});
+    _msgHandlerMap.insert({UP_PASSWD, bind(&User::update_passwd, this, _1)});
 };
 
 User::~User(){
@@ -25,7 +27,6 @@ User::~User(){
 };
 
 std::string User::Login(Json::Value &json){
-    
     std::vector<user> vec;
     std::string id = json["id"].asString();
     vec = mydb->exe_select("select * from user where id='"+ id +"' and passwd ='"
@@ -46,8 +47,7 @@ std::string User::Login(Json::Value &json){
     if(status == "1"){
         std::string mac_addr = json["mac_addr"].asString();
         Time time;
-        std::cout << "insert into LOGIN values(null, '" << id << 
-        "','" << mac_addr << "','" << json["local_addr"].asString() << "','" << time.getTime() << "');" << std::endl;
+        
         bool state = mydb->exeSQL("insert into LOGIN values(null, '" + id + 
         "','" + mac_addr + "','" + conn_ptr->peerAddress().toIpPort() + "','" + time.getTime() + "');");
         if(!state){
@@ -124,6 +124,49 @@ std::string User::regis(Json::Value &json){
     "','" + mac_addr + "','" + conn_ptr->peerAddress().toIpPort() + "','" + time.getTime() + "');");
     if(!state){
         LOG_ERROR("insert REGISTER_log id = %s, mac_add = %s", id.c_str(), mac_addr.c_str());
+    }
+    
+    return json_string(j_v);
+}
+
+std::string User::get_user(Json::Value &json){
+    std::vector<user> vec;
+    Redis redis;
+    if(!redis.connect())
+    {
+        LOG_DEBUG("connect error!");
+        return "";
+    }
+    std::string id = redis.get(conn_ptr->name());
+    vec = mydb->get_user("select name, phone from user where id = '" + id + "';");
+
+    Json::Value j_v;
+    j_v["id"] = id;
+    j_v["name"] = vec[0].name;
+    j_v["phone"] = vec[0].phone;
+
+    return json_string(j_v);
+}
+
+std::string User::update_passwd(Json::Value &json){
+    Redis redis;
+    if(!redis.connect())
+    {
+        LOG_DEBUG("connect error!");
+        return "";
+    }
+    std::string id = redis.get(conn_ptr->name());
+    std::cout << "update user set passwd = '" << json["passwd"].asString() <<
+    "' where id = '" << id << "';" << std::endl;
+    bool flag = mydb->exeSQL("update user set passwd = '" + json["passwd"].asString() +
+    "' where id = '" + id + "';");
+
+    Json::Value j_v;
+
+    if(flag){
+        j_v["status"] = "succ";
+    }else{
+        j_v["status"] = "fail";
     }
     
     return json_string(j_v);
