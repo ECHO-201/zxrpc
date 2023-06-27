@@ -32,9 +32,8 @@ void RpcCaller::connect(const std::string & ip, int port){
 void RpcCaller::get_host_data(const string &method_name){
     ZkpClient zkCli;
     zkCli.Start();
-    //  /zxrpc/method_name
+
     std::string method_path = "/" + m_service + "/" + method_name;
-    // 127.0.0.1:9966
     std::string host_data = zkCli.GetData(method_path.c_str());
     if (host_data == "")
     {
