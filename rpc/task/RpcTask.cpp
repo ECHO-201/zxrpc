@@ -122,29 +122,6 @@ void RpcTask::run()
 
     LOG_INFO("recv msg content len: %d, msg data: %s", len, buf);
 
-    std::string workflow_name = "./config/workflow.xml";
-    struct stat stat_buf;
-    if(stat(workflow_name.c_str(), &stat_buf) != 0){
-        LOG_DEBUG("workflow_name is no exist!");
-        return;
-    }
-
-    Redis rds;
-	if(!rds.connect())
-	{
-		LOG_DEBUG("connect error!");
-		return;
-	}
-    Workflow *workflow = Singleton<Workflow>::instance();
-    std::string workflow_time = rds.get(workflow_name);
-    std::string workflow_mtime = ctime(&stat_buf.st_mtime);
-    if(workflow->get_work_size() == 0 || workflow_time.empty() || workflow_mtime != workflow_time){
-        LOG_DEBUG("change workflow");
-        workflow->clear();
-        workflow->load(workflow_name);
-        rds.set(workflow_name, workflow_mtime);
-    }
-
     DataStream in;
     in.write(buf, len);
 
